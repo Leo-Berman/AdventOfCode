@@ -203,79 +203,92 @@ def main():
 
         print(min(retlist))
     elif prob == 2:
-        
-        # Try intervalmap???
-        SeedToSoilDict = defaultdict(lambda: 0)
+        class intervalmap():
+            def __init__(self):
+                self.intervals=[]
+            
+            def addinterval(self,inputlist):
+                self.intervals.append(inputlist)
+            def printmap(self):
+                for x in self.intervals:
+                    print(self.intervals)
+            def inmap(self,inputnum):
+                for x in self.intervals:
+                    if inputnum >= x[0] and inputnum < x[1]:
+                        return x[2]
+                return 0
+                # Try intervalmap???
+        SeedSoilMap = intervalmap()
         for x in lines[SeedToSoilIndex+1:SoilToFertilizerIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                SeedToSoilDict.update({i:num2add})
-        SoilToFertilizerDict = defaultdict(lambda: 0)
+            SeedSoilMap.addinterval([Source,Source+Length,num2add])
+            
+        SoilFertilizerMap=intervalmap()
         for x in lines[SoilToFertilizerIndex+1:FertilizerToWaterIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                SoilToFertilizerDict.update({i:num2add})
-        FertilizerToWaterDict = defaultdict(lambda: 0)
+            SoilFertilizerMap.addinterval([Source,Source+Length,num2add])
+        
+        FertilizerWaterMap=intervalmap()
         for x in lines[FertilizerToWaterIndex+1:WaterToLightIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                FertilizerToWaterDict.update({i:num2add})
-        WaterToLightDict = defaultdict(lambda: 0)
+            FertilizerWaterMap.addinterval([Source,Source+Length,num2add])
+        
+        WaterLightMap=intervalmap()
         for x in lines[WaterToLightIndex+1:LightToTempIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                WaterToLightDict.update({i:num2add})
-        LightToTempDict = defaultdict(lambda: 0)
+            WaterLightMap.addinterval([Source,Source+Length,num2add])
+            
+        LightTempMap=intervalmap()
         for x in lines[LightToTempIndex+1:TempToHumidityIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                LightToTempDict.update({i:num2add})
-        TempToHumidityDict = defaultdict(lambda: 0)
+            LightTempMap.addinterval([Source,Source+Length,num2add])
+            
+        TempHumidityMap=intervalmap()
         for x in lines[TempToHumidityIndex+1:HumidityToLocationIndex]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                TempToHumidityDict.update({i:num2add})
-        HumidityToLocationDict = defaultdict(lambda: 0)
+            TempHumidityMap.addinterval([Source,Source+Length,num2add])
+        
+        HumidityLocationMap=intervalmap()
         for x in lines[HumidityToLocationIndex+1::]:
             Source = int(x[1])
             Destination = int(x[0])
             Length = int(x[2])
             num2add = Destination-Source
-            for i in range(Source,Source+Length,1):
-                HumidityToLocationDict.update({i:num2add})
+            HumidityLocationMap.addinterval([Source,Source+Length,num2add])
+            
+        
+        
+            
         total=0
         runnin = 99999999999
         for y in ranges:
             for x in range(y[0],y[0]+y[1],1):
-                x+=SeedToSoilDict[x]
-                x+=SoilToFertilizerDict[x]
-                x+=FertilizerToWaterDict[x]
-                x+=WaterToLightDict[x]
-                x+=LightToTempDict[x]
-                x+=TempToHumidityDict[x]
-                x+=HumidityToLocationDict[x]
+                x+=SeedSoilMap.inmap(x)
+                x+=SoilFertilizerMap.inmap(x)
+                x+=FertilizerWaterMap.inmap(x)
+                x+=WaterLightMap.inmap(x)
+                x+=LightTempMap.inmap(x)
+                x+=TempHumidityMap.inmap(x)
+                x+=HumidityLocationMap.inmap(x)
                 if x < runnin:
                     runnin = x
                     print(runnin)
-                    total+=1
-                    print(total,"completed")
-        print(runnin)
 main()
